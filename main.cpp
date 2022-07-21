@@ -6,63 +6,6 @@
 
 using namespace std;
 
-void freeList(list<Puzzle *> *l) {
-    for (std::list<Puzzle *>::iterator it = l->begin(); it != l->end(); ++it)
-        delete (*it);
-}
-
-bool bfs(Puzzle *start)
-{
-    list<Puzzle *> queue, closeds;
-    Puzzle *p, *child;
-    bool win = false;
-
-    p = new Puzzle(start->getN());
-    p->copy(start);
-
-    queue.push_back(p);
-    int cont = 0;
-
-    while (queue.size() > 0)
-    {
-        cont++;
-        p = queue.front();
-        queue.pop_front();
-
-        if (p->checkWin())
-        {
-            cout << "Solution: ";
-            p->show(cout);
-            win = true;
-            break;
-        }
-
-        for (int i = 0; i < p->getSize(); i++)
-        {
-            child = new Puzzle(p->getN());
-            child->copy(p);
-
-            if (child->move(i))
-            {
-                if (exists(child, &closeds))
-                {
-                    delete child;
-                    continue;
-                }
-                queue.push_back(child);
-            }
-            else
-                delete child;
-        }
-
-        closeds.push_back(p);
-    }
-
-    freeList(&queue);
-    freeList(&closeds);
-
-    return win;
-}
 
 int main(int argc, char const *argv[])
 {
@@ -84,7 +27,7 @@ int main(int argc, char const *argv[])
     // p.show(cout);
     // showSolution(cout, &solutions, &moves);
 
-    cout << "BFS: " << bfs(&p);
+    // cout << "BFS: " << bfs(&p);
 
     return 0;
 }

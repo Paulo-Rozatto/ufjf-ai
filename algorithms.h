@@ -7,8 +7,11 @@
 using namespace std;
 
 bool backtracking(Puzzle *p, list<Puzzle *> *parents, list<Puzzle *> *solution_states, list<int> *solution_moves);
+bool bfs(Puzzle *start);
+
 bool exists(Puzzle *p, list<Puzzle *> *s);
 void showSolution(ostream &out, list<Puzzle *> *solution_states, list<int> *solution_moves);
+void freeList(list<Puzzle *> *l);
 
 bool backtracking(Puzzle *p, list<Puzzle *> *parents, list<Puzzle *> *solution_states, list<int> *solution_moves)
 {
@@ -43,6 +46,59 @@ bool backtracking(Puzzle *p, list<Puzzle *> *parents, list<Puzzle *> *solution_s
     return false;
 }
 
+bool bfs(Puzzle *start)
+{
+    list<Puzzle *> queue, closeds;
+    Puzzle *p, *child;
+    bool win = false;
+
+    p = new Puzzle(start->getN());
+    p->copy(start);
+
+    queue.push_back(p);
+    int cont = 0;
+
+    while (queue.size() > 0)
+    {
+        cont++;
+        p = queue.front();
+        queue.pop_front();
+
+        if (p->checkWin())
+        {
+            cout << "Solution: ";
+            p->show(cout);
+            win = true;
+            break;
+        }
+
+        for (int i = 0; i < p->getSize(); i++)
+        {
+            child = new Puzzle(p->getN());
+            child->copy(p);
+
+            if (child->move(i))
+            {
+                if (exists(child, &closeds))
+                {
+                    delete child;
+                    continue;
+                }
+                queue.push_back(child);
+            }
+            else
+                delete child;
+        }
+
+        closeds.push_back(p);
+    }
+
+    freeList(&queue);
+    freeList(&closeds);
+
+    return win;
+}
+
 bool exists(Puzzle *p, list<Puzzle *> *s)
 {
     for (std::list<Puzzle *>::iterator it = s->begin(); it != s->end(); ++it)
@@ -65,4 +121,10 @@ void showSolution(ostream &out, list<Puzzle *> *solution_states, list<int> *solu
         (*it)->show(out);
         it2++;
     }
+}
+
+void freeList(list<Puzzle *> *l)
+{
+    for (std::list<Puzzle *>::iterator it = l->begin(); it != l->end(); ++it)
+        delete (*it);
 }
