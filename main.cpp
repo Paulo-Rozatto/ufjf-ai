@@ -7,8 +7,12 @@ using namespace std;
 
 int main(int argc, char const *argv[])
 {
-    Puzzle p(2);
     ifstream input("input.txt");
+    int n;
+
+    input >> n;
+
+    Puzzle p(n);
 
     p.fill(input);
     p.show();
