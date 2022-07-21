@@ -78,11 +78,11 @@ bool Puzzle::checkWin()
     return (countWhite == n);
 }
 
-void Puzzle::show()
+void Puzzle::show(std::ostream& out)
 {
     for (int i = 0; i < this->size; i++)
-        std::cout << puz[i] << " ";
-    std::cout << std::endl;
+        out << puz[i] << " ";
+    out << std::endl;
 }
 
 int Puzzle::getSize()

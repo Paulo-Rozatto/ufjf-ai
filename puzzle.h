@@ -22,7 +22,7 @@ public:
     bool move(int idx);
     void fill(std::istream &in);
     bool checkWin();
-    void show();
+    void show(std::ostream &out);
     int getSize();
     int getN() { return this->n; }
     void copy(Puzzle *p);
