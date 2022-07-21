@@ -1,7 +1,10 @@
 #include "puzzle.h"
 
+int Puzzle::id_count = 1;
+
 Puzzle::Puzzle(int n)
 {
+    this->id = id_count++;
     this->n = n;
     this->size = 2 * n + 1;
     puz = new char[this->size];
@@ -80,4 +83,36 @@ void Puzzle::show()
     for (int i = 0; i < this->size; i++)
         std::cout << puz[i] << " ";
     std::cout << std::endl;
+}
+
+int Puzzle::getSize()
+{
+    return this->size;
+}
+
+char *Puzzle::getPuz()
+{
+    return puz;
+}
+
+void Puzzle::copy(Puzzle *p)
+{
+    char *puz = p->getPuz();
+
+    this->space_idx = p->space_idx;
+
+    for (int i = 0; i < this->size; i++)
+        this->puz[i] = puz[i];
+}
+
+bool Puzzle::equals(Puzzle *p)
+{
+     char *puz = p->getPuz();
+
+    for (int i = 0; i < this->size; i++)
+    {
+        if (this->puz[i] != puz[i])
+            return false;
+    }
+    return true;
 }
