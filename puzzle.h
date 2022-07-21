@@ -3,8 +3,6 @@
 
 #include <iostream>
 
-using namespace std;
-
 #define blue 'b'  // azul
 #define white 'w' // branco
 
@@ -14,11 +12,13 @@ private:
     int n;     // quantidade de blocos de cada cor
     int size;  // tamanho total da regua (2 * n + 1)
     char *puz; // puzzle
+    int space_idx;
 public:
     Puzzle(int n);
     ~Puzzle();
+    bool move(int idx);
+    void fill(std::istream& in);
     bool checkWin();
-    void fill(istream& in);
     void show();
 };
 

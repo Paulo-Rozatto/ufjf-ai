@@ -5,6 +5,7 @@ Puzzle::Puzzle(int n)
     this->n = n;
     this->size = 2 * n + 1;
     puz = new char[this->size];
+    this->space_idx = -1;
 }
 
 Puzzle::~Puzzle()
@@ -12,7 +13,24 @@ Puzzle::~Puzzle()
     delete[] puz;
 }
 
-void Puzzle::fill(istream &in)
+bool Puzzle::move(int idx)
+{
+    int distance = idx - space_idx;
+    if (distance < 0)
+        distance *= -1;
+
+    if (distance > 0 && distance <= this->n)
+    {
+        this->puz[space_idx] = this->puz[idx];
+        this->puz[idx] = '-';
+        space_idx = idx;
+        return true;
+    }
+
+    return false;
+}
+
+void Puzzle::fill(std::istream &in)
 {
     int countBlue = 0, countWhite = 0, countSpace = 0;
 
@@ -25,24 +43,20 @@ void Puzzle::fill(istream &in)
         else if (puz[i] == white)
             countWhite++;
         else if (puz[i] == '-')
+        {
+            space_idx = i;
             countSpace++;
+        }
     }
 
     if (countBlue != n)
-        cout << "Error: blues should be " << n << ", they are " << countBlue << endl;
+        std::cout << "Error: blues should be " << n << ", they are " << countBlue << std::endl;
 
     if (countWhite != n)
-        cout << "Error: whites should be " << n << ", they are " << countWhite << endl;
+        std::cout << "Error: whites should be " << n << ", they are " << countWhite << std::endl;
 
     if (countSpace != 1)
-        cout << "Error: spaces should be 1, they are " << countSpace << endl;
-}
-
-void Puzzle::show()
-{
-    for (int i = 0; i < this->size; i++)
-        cout << puz[i] << " ";
-    cout << endl;
+        std::cout << "Error: spaces should be 1, they are " << countSpace << std::endl;
 }
 
 bool Puzzle::checkWin()
@@ -59,4 +73,11 @@ bool Puzzle::checkWin()
     }
 
     return (countWhite == n);
+}
+
+void Puzzle::show()
+{
+    for (int i = 0; i < this->size; i++)
+        std::cout << puz[i] << " ";
+    std::cout << std::endl;
 }
