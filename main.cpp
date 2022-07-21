@@ -17,7 +17,10 @@ bool bfs(Puzzle *start)
     Puzzle *p, *child;
     bool win = false;
 
-    queue.push_back(start);
+    p = new Puzzle(start->getN());
+    p->copy(start);
+
+    queue.push_back(p);
     int cont = 0;
 
     while (queue.size() > 0)
@@ -56,8 +59,7 @@ bool bfs(Puzzle *start)
     }
 
     freeList(&queue);
-    // closeds.pop_front(); // primeiro elemento tem referencia na main
-    // freeList(&closeds);
+    freeList(&closeds);
 
     return win;
 }
