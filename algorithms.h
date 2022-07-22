@@ -8,6 +8,7 @@ using namespace std;
 
 bool backtracking(Puzzle *p, list<Puzzle *> *parents, list<Puzzle *> *solution_states, list<int> *solution_moves);
 bool bfs(Puzzle *start);
+bool dfs(Puzzle *p, int depth);
 
 bool exists(Puzzle *p, list<Puzzle *> *s);
 void showSolution(ostream &out, list<Puzzle *> *solution_states, list<int> *solution_moves);
@@ -97,6 +98,34 @@ bool bfs(Puzzle *start)
     freeList(&closeds);
 
     return win;
+}
+
+bool dfs(Puzzle *p, int depth)
+{
+    Puzzle *child;
+
+    if (depth == 0)
+        return false;
+
+    if (p->checkWin())
+    {
+        p->show(cout);
+        return true;
+    }
+
+    child = new Puzzle(p->getN());
+    for (int i = 0; i < p->getSize(); i++)
+    {
+        child->copy(p);
+        child->move(i);
+        if (dfs(child, depth - 1))
+        {
+            delete child;
+            return true;
+        }
+    }
+
+    return false;
 }
 
 bool exists(Puzzle *p, list<Puzzle *> *s)

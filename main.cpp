@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <list>
+#include <stack>
 
 #include "algorithms.h"
 
@@ -28,6 +29,8 @@ int main(int argc, char const *argv[])
     // showSolution(cout, &solutions, &moves);
 
     // cout << "BFS: " << bfs(&p);
+
+    cout << "DFS:" << dfs(&p, 4) << endl;
 
     return 0;
 }
