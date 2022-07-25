@@ -8,52 +8,6 @@
 
 using namespace std;
 
-struct CmpPuzzles
-{
-    bool operator()(const Puzzle *p1, const Puzzle *p2) const
-    {
-        return p1->getWhiteLeft() > p2->getWhiteLeft();
-    }
-};
-
-bool greed(Puzzle *p, priority_queue<Puzzle *, vector<Puzzle *>, CmpPuzzles> *minheap)
-{
-    Puzzle *top, *child;
-    bool found = false;
-
-    minheap->push(new Puzzle(p->getN()));
-    minheap->top()->copy(p);
-
-    while (minheap->size() > 0)
-    {
-        top = minheap->top();
-        minheap->pop();
-
-        if (top->heuristic() == 0)
-        {
-            found = true;
-            top->show(cout);
-            break;
-        }
-
-        child = new Puzzle(p->getN());
-        child->copy(top);
-
-        for (int i = 0; i < top->getSize(); i++)
-        {
-            if (child->move(i))
-            {
-                minheap->push(child);
-                child = new Puzzle(p->getN());
-                child->copy(top);
-            }
-        }
-        delete child;
-    }
-
-    return found;
-}
-
 int main(int argc, char const *argv[])
 {
     ifstream input("input.txt");
