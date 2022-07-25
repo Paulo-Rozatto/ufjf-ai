@@ -117,13 +117,16 @@ bool dfs(Puzzle *p, int depth)
     for (int i = 0; i < p->getSize(); i++)
     {
         child->copy(p);
-        child->move(i);
-        if (dfs(child, depth - 1))
+        if (child->move(i))
         {
-            delete child;
-            return true;
+            if (dfs(child, depth - 1))
+            {
+                delete child;
+                return true;
+            }
         }
     }
+    delete child;
 
     return false;
 }

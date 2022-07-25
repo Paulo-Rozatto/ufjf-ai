@@ -27,6 +27,7 @@ bool Puzzle::move(int idx)
         this->puz[space_idx] = this->puz[idx];
         this->puz[idx] = '-';
         space_idx = idx;
+        whiteLeft = n - this->countWhite();
         return true;
     }
 
@@ -52,6 +53,8 @@ void Puzzle::fill(std::istream &in)
         }
     }
 
+    whiteLeft = n - this->countWhite();
+
     if (countBlue != n)
         std::cout << "Error: blues should be " << n << ", they are " << countBlue << std::endl;
 
@@ -64,10 +67,21 @@ void Puzzle::fill(std::istream &in)
 
 bool Puzzle::checkWin()
 {
-    bool flag = false;
+    return (countWhite() == n);
+}
+
+// Heuristca vai ser o numero de brancas que ainda faltam ir para a esquerda de azuis
+int Puzzle::heuristic()
+{
+    return whiteLeft;
+}
+
+// Conta numero de brancas a direita de azuis
+int Puzzle::countWhite()
+{
     int countWhite = 0;
 
-    for (int i = 0; i < 2 * n + 1; i++)
+    for (int i = 0; i < this->size; i++)
     {
         if (puz[i] == white)
             countWhite++;
@@ -75,10 +89,9 @@ bool Puzzle::checkWin()
             break;
     }
 
-    return (countWhite == n);
+    return countWhite;
 }
-
-void Puzzle::show(std::ostream& out)
+void Puzzle::show(std::ostream &out)
 {
     for (int i = 0; i < this->size; i++)
         out << puz[i] << " ";
@@ -103,15 +116,17 @@ void Puzzle::copy(Puzzle *p)
 
     for (int i = 0; i < this->size; i++)
         this->puz[i] = puz[i];
+
+    whiteLeft = n - countWhite();
 }
 
 bool Puzzle::equals(Puzzle *p)
 {
-     char *puz = p->getPuz();
+    char *ppuz = p->getPuz();
 
     for (int i = 0; i < this->size; i++)
     {
-        if (this->puz[i] != puz[i])
+        if (this->puz[i] != ppuz[i])
             return false;
     }
     return true;

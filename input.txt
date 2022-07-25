@@ -1,2 +1,3 @@
 2
 wb-bw
+wbw-b
