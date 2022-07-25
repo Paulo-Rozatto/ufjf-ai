@@ -18,41 +18,35 @@ struct CmpPuzzles
 
 bool greed(Puzzle *p, priority_queue<Puzzle *, vector<Puzzle *>, CmpPuzzles> *minheap)
 {
-    Puzzle *child;
+    Puzzle *top, *child;
     bool found = false;
 
-    if (p->heuristic() == 0)
-    {
-        p->show(cout);
-        return true;
-    }
-
-    child = new Puzzle(p->getN());
-    child->copy(p);
-    for (int i = 0; i < p->getSize(); i++)
-    {
-
-        if (child->move(i))
-        {
-            // if (!exists(child, opened))
-            // {
-            minheap->push(child);
-            // opened->push_back(child);
-            child = new Puzzle(p->getN());
-            // }
-            child->copy(p);
-        }
-    }
-    delete child;
+    minheap->push(new Puzzle(p->getN()));
+    minheap->top()->copy(p);
 
     while (minheap->size() > 0)
     {
-        child = minheap->top();
+        top = minheap->top();
         minheap->pop();
-        if (!found && greed(child, minheap))
+
+        if (top->heuristic() == 0)
         {
             found = true;
+            top->show(cout);
             break;
+        }
+
+        child = new Puzzle(p->getN());
+        child->copy(top);
+
+        for (int i = 0; i < top->getSize(); i++)
+        {
+            if (child->move(i))
+            {
+                minheap->push(child);
+                child = new Puzzle(p->getN());
+                child->copy(top);
+            }
         }
         delete child;
     }
