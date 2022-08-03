@@ -16,9 +16,11 @@ private:
     int size;      // tamanho total da regua (2 * n + 1)
     char *puz;     // puzzle
     int whiteLeft; // numero de brancas que ainda estao a direita de azuis
+    int cost;      // quanto se andou ate chegar nessa configuracao
 
 public:
     Puzzle(int n);
+    Puzzle(int n, int cost);
     ~Puzzle();
     bool move(int idx);
     void fill(std::istream &in);
@@ -30,6 +32,7 @@ public:
     void copy(Puzzle *p);
     bool equals(Puzzle *p);
     int countWhite();
+    int getCost();
 
     bool operator>(Puzzle &p2)
     {
@@ -42,6 +45,7 @@ public:
     };
 
     int getWhiteLeft() const { return whiteLeft; }
+    int getCost() const { return cost; }
 
 protected:
     int space_idx;

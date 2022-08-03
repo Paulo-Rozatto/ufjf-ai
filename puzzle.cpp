@@ -9,6 +9,17 @@ Puzzle::Puzzle(int n)
     this->size = 2 * n + 1;
     puz = new char[this->size];
     this->space_idx = -1;
+    this->cost = 0;
+}
+
+Puzzle::Puzzle(int n, int cost)
+{
+    this->id = id_count++;
+    this->n = n;
+    this->size = 2 * n + 1;
+    puz = new char[this->size];
+    this->space_idx = -1;
+    this->cost = cost;
 }
 
 Puzzle::~Puzzle()
@@ -130,4 +141,9 @@ bool Puzzle::equals(Puzzle *p)
             return false;
     }
     return true;
+}
+
+int Puzzle::getCost()
+{
+    return cost;
 }
