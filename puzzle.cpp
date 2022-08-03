@@ -19,7 +19,7 @@ void Puzzle::fill(std::istream &in)
 {
     int countBlue = 0, countWhite = 0, countSpace = 0;
 
-    for (int i = 0; i < this->size; i++)
+    for (int i = 0; i < Puzzle::size; i++)
     {
         in >> puz[i];
 
@@ -34,7 +34,7 @@ void Puzzle::fill(std::istream &in)
         }
     }
 
-    whiteLeft = n - countWhite;
+    whiteLeft = n - this->countWhite();
 
     if (countBlue != n)
         std::cout << "Error: blues should be " << n << ", they are " << countBlue << std::endl;

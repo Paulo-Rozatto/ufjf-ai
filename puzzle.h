@@ -13,8 +13,10 @@ public:
     static int size; // tamanho total da regua (2 * n + 1)
 
     char *puz;     // puzzle
+    int space_idx; // posicao do espaco em branco
     int whiteLeft; // numero de brancas que ainda estao a direita de azuis
     int cost;      // quanto se andou ate chegar nessa configuracao
+    int generator; // movimento que gerou estado atual
 
     Puzzle();
     ~Puzzle();
@@ -39,7 +41,6 @@ public:
 
     // int getCost() const { return cost; }
 protected:
-    int space_idx;
     char *getPuz();
 };
 

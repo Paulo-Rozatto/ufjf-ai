@@ -223,16 +223,7 @@ bool astar(Puzzle *p, priority_queue<Puzzle *, vector<Puzzle *>, CmpObjective> *
     return found;
 }
 
-bool exists(Puzzle *p, list<Puzzle *> *s)
-{
-    for (std::list<Puzzle *>::iterator it = s->begin(); it != s->end(); ++it)
-    {
-        if ((*it)->equals(p))
-            return true;
-    }
 
-    return false;
-}
 
 void showSolution(ostream &out, list<Puzzle *> *solution_states, list<int> *solution_moves)
 {
