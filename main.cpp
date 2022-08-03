@@ -8,7 +8,7 @@
 
 using namespace std;
 
-// Globai de estatistica
+// Globais de estatistica
 int depth, cost, node_count, branch_count;
 
 bool exists(Puzzle *p, list<Puzzle *> *s)
@@ -55,6 +55,7 @@ bool backtracking(Puzzle *parent, list<Puzzle *> *path)
 
     // Assume que algum filho sera visitado
     depth += 1;
+    branch_count += 1;
 
     for (int i = start; i < end; i++)
     {
@@ -74,7 +75,10 @@ bool backtracking(Puzzle *parent, list<Puzzle *> *path)
     }
 
     if (revert_depth)
+    {
         depth -= 1;
+        branch_count -= 1;
+    }
     path->pop_back();
     delete child;
 
@@ -84,8 +88,9 @@ bool backtracking(Puzzle *parent, list<Puzzle *> *path)
 int main(int argc, char const *argv[])
 {
     ifstream input("input.txt");
-    int n;
     char opt = '\0';
+    bool has_solution;
+    int n;
 
     input >> n;
 
@@ -106,27 +111,30 @@ int main(int argc, char const *argv[])
         cin >> opt;
 
         depth = cost = node_count = branch_count = 0;
+        has_solution = false;
 
         switch (opt)
         {
         case '1':
-            if (backtracking(&root, &path))
-            {
-                showPath(&path);
-                cout << "depth: " << depth << endl
-                     << "visited: " << node_count << endl;
-            }
-            else
-                cout << "Sem solucao" << endl;
+            has_solution = backtracking(&root, &path);
             break;
 
         case '0':
             cout << "Encerrando" << endl;
             break;
         default:
-            cout << "Opcao invalida";
-            break;
+            cout << "Opcao invalida" << endl;
+            continue;
         }
+
+        if (has_solution)
+            showPath(&path);
+        else
+            cout << "Sem solucao" << endl;
+
+        cout << "Profundidade: " << depth << endl
+             << "Nos visitados: " << node_count << endl
+             << "Ramificacao: " << ((node_count - 1) / (float)branch_count) << endl;
     }
 
     return 0;
