@@ -25,6 +25,7 @@ public:
     bool checkWin();
     int heuristic();
     int countWhite();
+    void possibleRange(int *start, int *end);
     bool equals(Puzzle *p);
     void show(std::ostream &out);
     Puzzle *makeCopy();

@@ -23,22 +23,16 @@ bool backtracking(Puzzle *parent, list<Puzzle *> *path)
         return true;
     }
 
-    int start, end;
-    bool revert_depth = true;
-
-    start = parent->space_idx - Puzzle::n;
-    end = parent->space_idx + Puzzle::n;
-
-    if (start < 0)
-        start = 0;
-    if (end >= Puzzle::size)
-        end = Puzzle::size;
-
     Puzzle *child = parent->makeCopy();
 
     // Assume que algum filho sera visitado
     depth += 1;
     nonleaf_count += 1;
+
+    int start, end;
+    bool revert_depth = true; // reverte contagem de profundidade caso nao abrir algum filho
+
+    parent->possibleRange(&start, &end);
 
     for (int i = start; i < end; i++)
     {
@@ -67,5 +61,4 @@ bool backtracking(Puzzle *parent, list<Puzzle *> *path)
 
     return false;
 }
-
 #endif

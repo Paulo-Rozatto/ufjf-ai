@@ -88,6 +88,18 @@ int Puzzle::countWhite()
 
     return countWhite;
 }
+
+void Puzzle::possibleRange(int *start, int *end)
+{
+    *start = space_idx - Puzzle::n;
+    *end = space_idx + Puzzle::n;
+
+    if (*start < 0)
+        *start = 0;
+    if (*end >= Puzzle::size)
+        *end = Puzzle::size;
+}
+
 void Puzzle::show(std::ostream &out)
 {
     for (int i = 0; i < this->size; i++)
