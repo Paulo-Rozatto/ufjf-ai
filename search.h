@@ -23,7 +23,7 @@ bool backtracking(Puzzle *parent, list<Puzzle *> *path)
         return true;
     }
 
-    Puzzle *child = parent->makeCopy();
+    Puzzle *child = parent->makeChildCopy();
 
     // Assume que algum filho sera visitado
     depth += 1;
@@ -60,5 +60,66 @@ bool backtracking(Puzzle *parent, list<Puzzle *> *path)
     delete child;
 
     return false;
+}
+
+bool bfs(Puzzle *root, list<Puzzle *> *path)
+{
+    list<Puzzle *> open, closed;
+    Puzzle *p, *aux;
+    int start, end, idx;
+    bool found = false;
+
+    int aux_depth = 1, aux_level_size = 1;
+
+    open.push_back(root->makeChildCopy());
+
+    aux = new Puzzle();
+
+    while (open.size() > 0)
+    {
+        p = open.front();
+        open.pop_front();
+        closed.push_back(p);
+        node_count++;
+
+        if (p->checkWin())
+        {
+            found = true;
+            break;
+        }
+
+        idx = p->space_idx;
+        p->possibleRange(&start, &end);
+        aux->clone(p);
+
+        for (int i = start; i < end; i++)
+        {
+            if (i != p->space_idx)
+            {
+                aux->move(i);
+                if (!exists(aux, &open))
+                    open.push_back(aux->makeChildCopy());
+                aux->move(p->space_idx);
+            }
+        }
+
+        --aux_depth;
+        if (aux_depth == 0)
+        {
+            nonleaf_count += aux_level_size;
+            aux_depth = open.size();
+            aux_level_size = aux_depth;
+            ++depth;
+        }
+    }
+
+    if (found)
+        buildPath(&closed, path);
+
+    freeList(&open);
+    freeList(&closed);
+    delete aux;
+
+    return found;
 }
 #endif

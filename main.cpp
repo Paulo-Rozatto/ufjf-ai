@@ -29,9 +29,11 @@ int main(int argc, char const *argv[])
     {
         cout << "Opcoes: " << endl
              << "1 - Backtracking" << endl
+             << "2 - BFS" << endl
              << "0 - Sair" << endl;
 
-        cin >> opt;
+        // cin >> opt;
+        opt = '2';
 
         depth = cost = node_count = nonleaf_count = 0;
         has_solution = false;
@@ -41,7 +43,8 @@ int main(int argc, char const *argv[])
         case '1':
             has_solution = backtracking(&root, &path);
             break;
-
+        case '2':
+            has_solution = bfs(&root, &path);
         case '0':
             cout << "Encerrando" << endl;
             break;
@@ -49,6 +52,8 @@ int main(int argc, char const *argv[])
             cout << "Opcao invalida" << endl;
             continue;
         }
+
+        opt = '0';
 
         if (has_solution)
             showPath(&path);

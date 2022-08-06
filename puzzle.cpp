@@ -2,10 +2,13 @@
 
 int Puzzle::n = 0;
 int Puzzle::size = 0;
+int Puzzle::id_count = 0;
 
 Puzzle::Puzzle()
 {
     puz = new char[Puzzle::n];
+    this->id = ++Puzzle::id_count;
+    this->parent_id = -1;
     this->space_idx = -1;
     this->cost = 0;
 }
@@ -117,10 +120,11 @@ bool Puzzle::equals(Puzzle *p)
     return true;
 }
 
-Puzzle *Puzzle::makeCopy()
+Puzzle *Puzzle::makeChildCopy()
 {
     Puzzle *p = new Puzzle();
 
+    p->parent_id = this->id;
     p->space_idx = this->space_idx;
     p->cost = this->cost;
     p->whiteLeft = this->whiteLeft;
@@ -129,4 +133,15 @@ Puzzle *Puzzle::makeCopy()
         p->puz[i] = this->puz[i];
 
     return p;
+}
+
+void Puzzle::clone(Puzzle *p)
+{
+    this->id = p->id;
+    this->parent_id = p->parent_id;
+    this->space_idx = p->space_idx;
+    this->whiteLeft = p->whiteLeft;
+
+    for (int i = 0; i < Puzzle::size; i++)
+        this->puz[i] = p->puz[i];
 }

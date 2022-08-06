@@ -9,9 +9,12 @@
 class Puzzle
 {
 public:
-    static int n;    // quantidade de blocos de cada cor
-    static int size; // tamanho total da regua (2 * n + 1)
+    static int id_count; // contador de id
+    static int n;        // quantidade de blocos de cada cor
+    static int size;     // tamanho total da regua (2 * n + 1)
 
+    int id;
+    int parent_id;
     char *puz;     // puzzle
     int space_idx; // posicao do espaco em branco
     int whiteLeft; // numero de brancas que ainda estao a direita de azuis
@@ -28,7 +31,8 @@ public:
     void possibleRange(int *start, int *end);
     bool equals(Puzzle *p);
     void show(std::ostream &out);
-    Puzzle *makeCopy();
+    Puzzle *makeChildCopy();
+    void clone(Puzzle *p);
 
     bool operator>(Puzzle &p2)
     {
