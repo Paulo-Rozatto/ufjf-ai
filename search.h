@@ -145,7 +145,7 @@ bool dfs(Puzzle *root, list<Puzzle *> *path, int max_depth)
         open.pop_back();
         closed.push_back(p);
 
-        if (counter.back() == 0)
+        while (counter.back() == 0)
         {
             curr_depth -= 1;
             counter.pop_back();
