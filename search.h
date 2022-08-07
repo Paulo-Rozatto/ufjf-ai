@@ -201,4 +201,59 @@ bool dfs(Puzzle *root, list<Puzzle *> *path, int max_depth)
     return found;
 }
 
+struct CmpHeuristc
+{
+    bool operator()(const Puzzle *p1, const Puzzle *p2) const
+    {
+        return p1->whiteLeft > p2->whiteLeft;
+    }
+};
+
+bool greed(Puzzle *root, list<Puzzle *> *path)
+{
+    priority_queue<Puzzle *, vector<Puzzle *>, CmpHeuristc> min_heap;
+    list<Puzzle *> closed;
+    Puzzle *top, *aux;
+    bool found = false;
+    int start, end;
+
+    min_heap.push(root->makeChildCopy());
+    aux = new Puzzle();
+
+    while (min_heap.size() > 0)
+    {
+        top = min_heap.top();
+        min_heap.pop();
+        closed.push_back(top);
+        node_count++;
+
+        if (top->checkWin())
+        {
+            found = true;
+            break;
+        }
+
+        top->possibleRange(&start, &end);
+        aux->clone(top);
+
+        for (int i = start; i < end; i++)
+        {
+            if (i != top->space_idx)
+            {
+                aux->move(i);
+                if (!exists(aux, &closed))
+                    min_heap.push(aux->makeChildCopy());
+                aux->move(top->space_idx);
+            }
+        }
+    }
+
+    if (found)
+        buildPath(&closed, path);
+    freeList(&closed);
+    delete aux;
+
+    return found;
+}
+
 #endif
