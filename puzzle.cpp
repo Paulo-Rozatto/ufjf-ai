@@ -76,6 +76,10 @@ int Puzzle::heuristic()
     return whiteLeft;
 }
 
+int Puzzle::objective() {
+    return whiteLeft + cost;
+}
+
 // Conta numero de brancas a direita de azuis
 int Puzzle::countWhite()
 {

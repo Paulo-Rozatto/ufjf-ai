@@ -28,14 +28,17 @@ int main(int argc, char const *argv[])
     while (opt != '0')
     {
         cout << "Opcoes: " << endl
-             << "1 - Backtracking" << "\t4 - Greed" << endl
-             << "2 - BFS"  << "\t\t\t5 - A*" << endl
-             << "3 - DFS" << endl
+             << "1 - Backtracking"
+             << "\t4 - Greed" << endl
+             << "2 - BFS"
+             << "\t\t\t5 - A*" << endl
+             << "3 - DFS"
+             << "\t\t\t6 - IDA*" << endl
              << "--" << endl
              << "0 - Sair" << endl;
 
-        cin >> opt;
-        // opt = '3';
+        // cin >> opt;
+        opt = '6';
 
         depth = cost = node_count = nonleaf_count = 0;
         has_solution = false;
@@ -43,7 +46,7 @@ int main(int argc, char const *argv[])
         switch (opt)
         {
         case '1':
-            has_solution = backtracking(&root, &path);
+            has_solution = backtracking(root.makeChildCopy(), &path);
             break;
         case '2':
             has_solution = bfs(&root, &path);
@@ -54,8 +57,11 @@ int main(int argc, char const *argv[])
         case '4':
             has_solution = greed(&root, &path);
             break;
-         case '5':
+        case '5':
             has_solution = aStar(&root, &path);
+            break;
+        case '6':
+            has_solution = idaStar(root.makeChildCopy(), &path);
             break;
         case '0':
             cout << "Encerrando" << endl;
@@ -65,7 +71,7 @@ int main(int argc, char const *argv[])
             continue;
         }
 
-        // opt = '0';
+        opt = '0';
 
         if (has_solution)
             showPath(&path);

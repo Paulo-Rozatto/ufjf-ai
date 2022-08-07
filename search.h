@@ -6,6 +6,8 @@
 #include <list>
 #include "util.h"
 
+#define infinity 2147483647
+
 using namespace std;
 
 // Globais de estatistica
@@ -18,9 +20,7 @@ bool backtracking(Puzzle *parent, list<Puzzle *> *path)
     path->push_back(parent);
 
     if (parent->checkWin())
-    {
         return true;
-    }
 
     Puzzle *child = parent->makeChildCopy();
 
@@ -316,4 +316,114 @@ bool aStar(Puzzle *root, list<Puzzle *> *path)
     return found;
 }
 
+bool idaRec(Puzzle *parent, list<Puzzle *> *path, int *threshold, int *old_threshold, priority_queue<Puzzle *, vector<Puzzle *>, CmpObjective> *discarded)
+{
+    node_count += 1;
+
+    path->push_back(parent);
+
+    if (parent->checkWin() && parent->objective() <= *threshold)
+        return true;
+
+    if (parent->objective() > *threshold)
+    {
+        discarded->push(parent);
+        path->pop_back();
+        return false;
+    }
+
+    Puzzle *child = parent->makeChildCopy();
+
+    // Assume que algum filho sera visitado
+    depth += 1;
+    nonleaf_count += 1;
+
+    int start, end;
+    bool revert_depth = true; // reverte contagem de profundidade caso nao abrir algum filho
+
+    parent->possibleRange(&start, &end);
+
+    for (int i = start; i < end; i++)
+    {
+        if (i != parent->space_idx)
+        {
+            child->move(i);
+
+            if (!exists(child, path))
+            {
+                revert_depth = false;
+                if (idaRec(child, path, threshold, old_threshold, discarded))
+                    return true;
+                child = parent->makeChildCopy();
+            }
+            else
+                child->move(parent->space_idx); // volta estado se falhar
+        }
+    }
+
+    if (revert_depth)
+    {
+        depth -= 1;
+        nonleaf_count -= 1;
+    }
+    path->pop_back();
+    // delete child;
+
+    return false;
+}
+
+int search(list<Puzzle *> *path, int cost, int threshold)
+{
+    Puzzle *p = path->back();
+    int f = cost + p->heuristic();
+
+    if (f > threshold)
+        return f;
+    if (p->checkWin())
+        return -1;
+
+    int min = infinity;
+    int start, end, t;
+    Puzzle *child = p->makeChildCopy();
+
+    p->possibleRange(&start, &end);
+
+    for (int i = start; i < end; i++)
+    {
+        if (i != p->space_idx)
+        {
+            child->move(i);
+            if (!exists(child, path))
+            {
+                path->push_back(child);
+                t = search(path, cost + 1, threshold);
+                if (t == -1)
+                    return -1;
+                if (t < min)
+                    min = t;
+                path->pop_back();
+            }
+            child->move(p->space_idx);
+        }
+    }
+
+    return min;
+}
+
+bool idaStar(Puzzle *root, list<Puzzle *> *path)
+{
+    int threshold = root->objective();
+    int t;
+    path->push_back(root);
+
+    while (1)
+    {
+        t = search(path, 0, threshold);
+        if (t == -1)
+            return true;
+        if (t == infinity)
+            return false;
+        threshold = t;
+    }
+}
 #endif

@@ -27,6 +27,7 @@ public:
     bool move(int idx);
     bool checkWin();
     int heuristic();
+    int objective();
     int countWhite();
     void possibleRange(int *start, int *end);
     bool equals(Puzzle *p);
