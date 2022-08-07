@@ -5,6 +5,7 @@
 #include <fstream>
 #include <list>
 #include "util.h"
+#include "queue.h"
 
 #define INFINITY 2147483647
 #define FOUND -1
@@ -202,17 +203,9 @@ bool dfs(Puzzle *root, list<Puzzle *> *path, int max_depth)
     return found;
 }
 
-struct CmpHeuristc
-{
-    bool operator()(const Puzzle *p1, const Puzzle *p2) const
-    {
-        return p1->whiteLeft > p2->whiteLeft;
-    }
-};
-
 bool greed(Puzzle *root, list<Puzzle *> *path)
 {
-    priority_queue<Puzzle *, vector<Puzzle *>, CmpHeuristc> min_heap;
+    MyQueue<Puzzle *, vector<Puzzle *>, CmpHeuristc> min_heap;
     list<Puzzle *> closed;
     Puzzle *top, *aux;
     bool found = false;
@@ -242,7 +235,7 @@ bool greed(Puzzle *root, list<Puzzle *> *path)
             if (i != top->space_idx)
             {
                 aux->move(i);
-                if (!exists(aux, &closed))
+                if (!exists(aux, &closed) && !exists(aux, &min_heap))
                     min_heap.push(aux->makeChildCopy());
                 aux->move(top->space_idx);
             }
@@ -259,17 +252,9 @@ bool greed(Puzzle *root, list<Puzzle *> *path)
     return found;
 }
 
-struct CmpObjective
-{
-    bool operator()(const Puzzle *p1, const Puzzle *p2) const
-    {
-        return (p1->whiteLeft + p1->cost) > (p2->cost + p1->cost);
-    }
-};
-
 bool aStar(Puzzle *root, list<Puzzle *> *path)
 {
-    priority_queue<Puzzle *, vector<Puzzle *>, CmpObjective> min_heap;
+    MyQueue<Puzzle *, vector<Puzzle *>, CmpObjective> min_heap;
     list<Puzzle *> closed;
     Puzzle *top, *aux;
     bool found = false;
@@ -300,7 +285,7 @@ bool aStar(Puzzle *root, list<Puzzle *> *path)
             if (i != top->space_idx)
             {
                 aux->move(i);
-                if (!exists(aux, &closed))
+                if (!exists(aux, &min_heap) && !exists(aux, &closed))
                     min_heap.push(aux->makeChildCopy());
                 aux->move(top->space_idx);
             }

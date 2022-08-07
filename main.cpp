@@ -2,7 +2,6 @@
 #include <fstream>
 #include <list>
 #include <stack>
-#include <queue>
 
 #include "search.h"
 

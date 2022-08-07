@@ -3,12 +3,51 @@
 
 #include <list>
 #include "puzzle.h"
+#include "queue.h"
 
 using namespace std;
+
+struct CmpObjective
+{
+    bool operator()(const Puzzle *p1, const Puzzle *p2) const
+    {
+        return (p1->whiteLeft + p1->cost) > (p2->whiteLeft + p2->cost);
+    }
+};
+
+struct CmpHeuristc
+{
+    bool operator()(const Puzzle *p1, const Puzzle *p2) const
+    {
+        return p1->whiteLeft > p2->whiteLeft;
+    }
+};
 
 bool exists(Puzzle *p, list<Puzzle *> *s)
 {
     for (std::list<Puzzle *>::iterator it = s->begin(); it != s->end(); ++it)
+    {
+        if ((*it)->equals(p))
+            return true;
+    }
+
+    return false;
+}
+
+bool exists(Puzzle *p, MyQueue<Puzzle *, vector<Puzzle *>, CmpHeuristc> *s)
+{
+    for (MyQueue<Puzzle *, vector<Puzzle *>, CmpHeuristc>::const_iterator it = s->begin(); it != s->end(); ++it)
+    {
+        if ((*it)->equals(p))
+            return true;
+    }
+
+    return false;
+}
+
+bool exists(Puzzle *p, MyQueue<Puzzle *, vector<Puzzle *>, CmpObjective> *s)
+{
+    for (MyQueue<Puzzle *, vector<Puzzle *>, CmpObjective>::const_iterator it = s->begin(); it != s->end(); ++it)
     {
         if ((*it)->equals(p))
             return true;
