@@ -90,4 +90,16 @@ void freeList(list<Puzzle *> *s)
     s->clear();
 }
 
+void freeHeap(MyQueue<Puzzle *, vector<Puzzle *>, CmpHeuristc> *s)
+{
+    for (MyQueue<Puzzle *, vector<Puzzle *>, CmpHeuristc>::const_iterator it = s->begin(); it != s->end(); ++it)
+        delete *it;
+}
+
+void freeHeap(MyQueue<Puzzle *, vector<Puzzle *>, CmpObjective> *s)
+{
+    for (MyQueue<Puzzle *, vector<Puzzle *>, CmpObjective>::const_iterator it = s->begin(); it != s->end(); ++it)
+        delete *it;
+}
+
 #endif

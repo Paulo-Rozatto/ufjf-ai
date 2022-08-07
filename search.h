@@ -245,7 +245,7 @@ bool greed(Puzzle *root, list<Puzzle *> *path)
     if (found)
         buildPath(&closed, path);
 
-    // todo: free min_heap
+    freeHeap(&min_heap);
     freeList(&closed);
     delete aux;
 
@@ -296,6 +296,7 @@ bool aStar(Puzzle *root, list<Puzzle *> *path)
         buildPath(&closed, path);
 
     // todo: free min_heap
+    freeHeap(&min_heap);
     freeList(&closed);
     delete aux;
 
