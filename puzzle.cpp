@@ -126,7 +126,7 @@ Puzzle *Puzzle::makeChildCopy()
 
     p->parent_id = this->id;
     p->space_idx = this->space_idx;
-    p->cost = this->cost;
+    p->cost = this->cost + 1;
     p->whiteLeft = this->whiteLeft;
 
     for (int i = 0; i < Puzzle::size; i++)
@@ -141,6 +141,7 @@ void Puzzle::clone(Puzzle *p)
     this->parent_id = p->parent_id;
     this->space_idx = p->space_idx;
     this->whiteLeft = p->whiteLeft;
+    this->cost = p->cost;
 
     for (int i = 0; i < Puzzle::size; i++)
         this->puz[i] = p->puz[i];

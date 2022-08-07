@@ -28,10 +28,10 @@ int main(int argc, char const *argv[])
     while (opt != '0')
     {
         cout << "Opcoes: " << endl
-             << "1 - Backtracking" << endl
-             << "2 - BFS" << endl
+             << "1 - Backtracking" << "\t4 - Greed" << endl
+             << "2 - BFS"  << "\t\t\t5 - A*" << endl
              << "3 - DFS" << endl
-             << "4 - Greed" << endl
+             << "--" << endl
              << "0 - Sair" << endl;
 
         cin >> opt;
@@ -53,6 +53,9 @@ int main(int argc, char const *argv[])
             break;
         case '4':
             has_solution = greed(&root, &path);
+            break;
+         case '5':
+            has_solution = aStar(&root, &path);
             break;
         case '0':
             cout << "Encerrando" << endl;
