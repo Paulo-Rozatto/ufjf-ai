@@ -19,7 +19,6 @@ public:
     int space_idx; // posicao do espaco em branco
     int whiteLeft; // numero de brancas que ainda estao a direita de azuis
     int cost;      // quanto se andou ate chegar nessa configuracao
-    int generator; // movimento que gerou estado atual
 
     Puzzle();
     ~Puzzle();
@@ -34,20 +33,6 @@ public:
     void show(std::ostream &out);
     Puzzle *makeChildCopy();
     void clone(Puzzle *p);
-
-    bool operator>(Puzzle &p2)
-    {
-        return this->whiteLeft > p2.heuristic();
-    };
-
-    bool operator<(Puzzle &p2)
-    {
-        return this->whiteLeft < p2.heuristic();
-    };
-
-    // int getCost() const { return cost; }
-protected:
-    char *getPuz();
 };
 
 #endif
