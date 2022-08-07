@@ -30,10 +30,11 @@ int main(int argc, char const *argv[])
         cout << "Opcoes: " << endl
              << "1 - Backtracking" << endl
              << "2 - BFS" << endl
+             << "3 - DFS" << endl
              << "0 - Sair" << endl;
 
-        // cin >> opt;
-        opt = '2';
+        cin >> opt;
+        // opt = '3';
 
         depth = cost = node_count = nonleaf_count = 0;
         has_solution = false;
@@ -45,6 +46,10 @@ int main(int argc, char const *argv[])
             break;
         case '2':
             has_solution = bfs(&root, &path);
+            break;
+        case '3':
+            has_solution = dfs(&root, &path, 30000);
+            break;
         case '0':
             cout << "Encerrando" << endl;
             break;
@@ -53,7 +58,7 @@ int main(int argc, char const *argv[])
             continue;
         }
 
-        opt = '0';
+        // opt = '0';
 
         if (has_solution)
             showPath(&path);
@@ -63,6 +68,8 @@ int main(int argc, char const *argv[])
         cout << "Profundidade: " << depth << endl
              << "Nos visitados: " << node_count << endl
              << "Ramificacao: " << ((node_count - 1) / (float)nonleaf_count) << endl;
+
+        freeList(&path);
     }
 
     return 0;

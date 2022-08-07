@@ -19,7 +19,6 @@ bool backtracking(Puzzle *parent, list<Puzzle *> *path)
 
     if (parent->checkWin())
     {
-        cout << "ei" << endl;
         return true;
     }
 
@@ -66,7 +65,7 @@ bool bfs(Puzzle *root, list<Puzzle *> *path)
 {
     list<Puzzle *> open, closed;
     Puzzle *p, *aux;
-    int start, end, idx;
+    int start, end;
     bool found = false;
 
     int aux_depth = 1, aux_level_size = 1;
@@ -88,7 +87,6 @@ bool bfs(Puzzle *root, list<Puzzle *> *path)
             break;
         }
 
-        idx = p->space_idx;
         p->possibleRange(&start, &end);
         aux->clone(p);
 
@@ -97,7 +95,7 @@ bool bfs(Puzzle *root, list<Puzzle *> *path)
             if (i != p->space_idx)
             {
                 aux->move(i);
-                if (!exists(aux, &open))
+                if (!exists(aux, &open) && !exists(aux, &closed))
                     open.push_back(aux->makeChildCopy());
                 aux->move(p->space_idx);
             }
@@ -122,4 +120,85 @@ bool bfs(Puzzle *root, list<Puzzle *> *path)
 
     return found;
 }
+
+bool dfs(Puzzle *root, list<Puzzle *> *path, int max_depth)
+{
+    list<Puzzle *> open, closed;
+    vector<int> counter;
+    Puzzle *p, *aux;
+    int start, end, count;
+    bool found = false;
+
+    bool added = false;
+    int curr_depth = 1;
+
+    open.push_back(root->makeChildCopy());
+    counter.push_back(1);
+
+    aux = new Puzzle();
+
+    while (open.size() > 0)
+    {
+        p = open.back();
+        open.pop_back();
+        closed.push_back(p);
+
+        if (counter.back() == 0)
+        {
+            curr_depth -= 1;
+            counter.pop_back();
+        }
+
+        counter.at(counter.size() - 1) -= 1;
+
+        node_count++;
+
+        if (p->checkWin())
+        {
+            found = true;
+            break;
+        }
+
+        if (curr_depth < max_depth)
+        {
+            p->possibleRange(&start, &end);
+            aux->clone(p);
+
+            added = false;
+            count = 0;
+            for (int i = start; i < end; i++)
+            {
+                if (i != p->space_idx)
+                {
+                    aux->move(i);
+                    if (!exists(aux, &open) && !exists(aux, &closed))
+                    {
+                        open.push_back(aux->makeChildCopy());
+                        count++;
+                    }
+                    aux->move(p->space_idx);
+                }
+            }
+
+            if (count)
+            {
+                curr_depth++;
+                counter.push_back(count);
+            }
+        }
+
+        if (curr_depth > depth)
+            depth = curr_depth;
+    }
+
+    if (found)
+        buildPath(&closed, path);
+
+    freeList(&open);
+    freeList(&closed);
+    delete aux;
+
+    return found;
+}
+
 #endif

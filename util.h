@@ -39,6 +39,7 @@ void buildPath(list<Puzzle *> *closed, list<Puzzle *> *path)
             p = *it;
             path->push_front(p);
             closed->erase(next(it).base());
+            --it;
         }
     }
 }
