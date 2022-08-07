@@ -6,7 +6,8 @@
 #include <list>
 #include "util.h"
 
-#define infinity 2147483647
+#define INFINITY 2147483647
+#define FOUND -1
 
 using namespace std;
 
@@ -380,9 +381,9 @@ int search(list<Puzzle *> *path, int cost, int threshold)
     if (f > threshold)
         return f;
     if (p->checkWin())
-        return -1;
+        return FOUND;
 
-    int min = infinity;
+    int min = INFINITY;
     int start, end, t;
     Puzzle *child = p->makeChildCopy();
 
@@ -397,8 +398,8 @@ int search(list<Puzzle *> *path, int cost, int threshold)
             {
                 path->push_back(child);
                 t = search(path, cost + 1, threshold);
-                if (t == -1)
-                    return -1;
+                if (t == FOUND)
+                    return FOUND;
                 if (t < min)
                     min = t;
                 path->pop_back();
@@ -419,9 +420,9 @@ bool idaStar(Puzzle *root, list<Puzzle *> *path)
     while (1)
     {
         t = search(path, 0, threshold);
-        if (t == -1)
+        if (t == FOUND)
             return true;
-        if (t == infinity)
+        if (t == INFINITY)
             return false;
         threshold = t;
     }

@@ -37,8 +37,8 @@ int main(int argc, char const *argv[])
              << "--" << endl
              << "0 - Sair" << endl;
 
-        // cin >> opt;
-        opt = '6';
+        cin >> opt;
+        // opt = '6';
 
         depth = cost = node_count = nonleaf_count = 0;
         has_solution = false;
@@ -52,7 +52,10 @@ int main(int argc, char const *argv[])
             has_solution = bfs(&root, &path);
             break;
         case '3':
-            has_solution = dfs(&root, &path, 6);
+            int max_depth;
+            cout << "Profundidade maxima: ";
+            cin >> max_depth;
+            has_solution = dfs(&root, &path, max_depth);
             break;
         case '4':
             has_solution = greed(&root, &path);
@@ -71,7 +74,7 @@ int main(int argc, char const *argv[])
             continue;
         }
 
-        opt = '0';
+        // opt = '0';
 
         if (has_solution)
             showPath(&path);
