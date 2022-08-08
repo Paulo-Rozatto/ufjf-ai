@@ -15,16 +15,16 @@ using namespace std;
 // Globais de estatistica
 int depth, cost, node_count, nonleaf_count;
 
-bool backtracking(Puzzle *parent, list<Puzzle *> *path)
+bool backtracking(Puzzle *p, list<Puzzle *> *path)
 {
     node_count += 1;
 
-    path->push_back(parent);
+    path->push_back(p);
 
-    if (parent->checkWin())
+    if (p->checkWin())
         return true;
 
-    Puzzle *child = parent->makeChildCopy();
+    Puzzle *child = p->makeChildCopy();
 
     // Assume que algum filho sera visitado
     depth += 1;
@@ -33,22 +33,23 @@ bool backtracking(Puzzle *parent, list<Puzzle *> *path)
     int start, end;
     bool revert_depth = true; // reverte contagem de profundidade caso nao abrir algum filho
 
-    parent->possibleRange(&start, &end);
+    p->possibleRange(&start, &end);
 
     for (int i = start; i < end; i++)
     {
-        if (i != parent->space_idx)
+        if (i != p->space_idx)
         {
             child->move(i);
 
             if (!exists(child, path))
             {
                 revert_depth = false;
+                child->cost = p->cost + abs(i - p->space_idx);
                 if (backtracking(child, path))
                     return true;
             }
 
-            child->move(parent->space_idx); // volta estado se falhar
+            child->move(p->space_idx); // volta estado se falhar
         }
     }
 
@@ -98,7 +99,10 @@ bool bfs(Puzzle *root, list<Puzzle *> *path)
             {
                 aux->move(i);
                 if (!exists(aux, &open) && !exists(aux, &closed))
+                {
+                    aux->cost = p->cost + abs(i - p->space_idx);
                     open.push_back(aux->makeChildCopy());
+                }
                 aux->move(p->space_idx);
             }
         }
@@ -175,6 +179,7 @@ bool dfs(Puzzle *root, list<Puzzle *> *path, int max_depth)
                     aux->move(i);
                     if (!exists(aux, &open) && !exists(aux, &closed))
                     {
+                        aux->cost = p->cost + abs(i - p->space_idx);
                         open.push_back(aux->makeChildCopy());
                         count++;
                     }
@@ -245,6 +250,7 @@ bool greed(Puzzle *root, list<Puzzle *> *path)
                 if (!exists(aux, &closed) && !exists(aux, &min_heap))
                 {
                     childFlag = true;
+                    aux->cost = top->cost + abs(i - top->space_idx);
                     min_heap.push(aux->makeChildCopy());
                 }
                 aux->move(top->space_idx);
@@ -305,6 +311,7 @@ bool aStar(Puzzle *root, list<Puzzle *> *path)
                 aux->move(i);
                 if (!exists(aux, &min_heap) && !exists(aux, &closed))
                 {
+                    aux->cost = top->cost + abs(i - top->space_idx);
                     childFlag = true;
                     min_heap.push(aux->makeChildCopy());
                 }
@@ -326,20 +333,20 @@ bool aStar(Puzzle *root, list<Puzzle *> *path)
     return found;
 }
 
-int search(list<Puzzle *> *path, int cost, int threshold)
+int search(list<Puzzle *> *path, int threshold)
 {
     Puzzle *p = path->back();
-    int f = cost + p->heuristic();
+    int objective = p->cost + p->heuristic();
 
     node_count++;
 
-    if (f > threshold)
-        return f;
+    if (objective > threshold)
+        return objective;
     if (p->checkWin())
         return FOUND;
 
-    int min = INFINITY;
-    int start, end, t;
+    int min = INFINITY, new_threshold;
+    int start, end;
     bool hasChild = false;
     Puzzle *child = p->makeChildCopy();
 
@@ -354,11 +361,12 @@ int search(list<Puzzle *> *path, int cost, int threshold)
             {
                 hasChild = true;
                 path->push_back(child);
-                t = search(path, cost + 1, threshold);
-                if (t == FOUND)
+                child->cost = p->cost + abs(i - p->space_idx);
+                new_threshold = search(path, threshold);
+                if (new_threshold == FOUND)
                     return FOUND;
-                if (t < min)
-                    min = t;
+                if (new_threshold < min)
+                    min = new_threshold;
                 path->pop_back();
             }
             child->move(p->space_idx);
@@ -376,18 +384,18 @@ int search(list<Puzzle *> *path, int cost, int threshold)
 bool idaStar(Puzzle *root, list<Puzzle *> *path)
 {
     int threshold = root->objective();
-    int t, max_depth = 0;
+    int new_threshold, max_depth = 0;
     path->push_back(root);
 
     while (1)
     {
         depth = 0;
-        t = search(path, 0, threshold);
-        if (t == FOUND)
+        new_threshold = search(path, threshold);
+        if (new_threshold == FOUND)
             return true;
-        if (t == INFINITY)
+        if (new_threshold == INFINITY)
             return false;
-        threshold = t;
+        threshold = new_threshold;
         if (depth > max_depth)
             max_depth = depth;
     }

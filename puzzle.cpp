@@ -130,7 +130,7 @@ Puzzle *Puzzle::makeChildCopy()
 
     p->parent_id = this->id;
     p->space_idx = this->space_idx;
-    p->cost = this->cost + 1;
+    p->cost = this->cost;
     p->whiteLeft = this->whiteLeft;
 
     for (int i = 0; i < Puzzle::size; i++)

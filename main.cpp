@@ -97,7 +97,9 @@ int main(int argc, char const *argv[])
             cout << "Sem solucao" << endl;
 
         elapsed_seconds = end - start;
-        cout << "Profundidade: " << depth << endl
+
+        cout << "Custo: " << path.back()->cost << endl
+             << "Profundidade: " << depth << endl
              << "Nos visitados: " << node_count << endl
              << "Ramificacao: " << ((node_count - 1) / (float)nonleaf_count) << endl
              << "Tempo: " << elapsed_seconds.count() << "s" << endl;

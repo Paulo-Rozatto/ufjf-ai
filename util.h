@@ -58,8 +58,11 @@ bool exists(Puzzle *p, MyQueue<Puzzle *, vector<Puzzle *>, CmpObjective> *s)
 
 void showPath(list<Puzzle *> *path)
 {
+    int cost = 0;
     for (std::list<Puzzle *>::iterator it = path->begin(); it != path->end(); ++it)
+    {
         (*it)->show(cout);
+    }
 }
 
 void buildPath(list<Puzzle *> *closed, list<Puzzle *> *path)
