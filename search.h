@@ -185,6 +185,7 @@ bool dfs(Puzzle *root, list<Puzzle *> *path, int max_depth)
             if (count)
             {
                 curr_depth++;
+                nonleaf_count++;
                 counter.push_back(count);
             }
         }
@@ -208,8 +209,8 @@ bool greed(Puzzle *root, list<Puzzle *> *path)
     MyQueue<Puzzle *, vector<Puzzle *>, CmpHeuristc> min_heap;
     list<Puzzle *> closed;
     Puzzle *top, *aux;
-    bool found = false;
-    int start, end;
+    bool found = false, childFlag;
+    int start, end, max_cost = -1;
 
     min_heap.push(root->makeChildCopy());
     aux = new Puzzle();
@@ -221,6 +222,12 @@ bool greed(Puzzle *root, list<Puzzle *> *path)
         closed.push_back(top);
         node_count++;
 
+        if (top->cost > max_cost)
+        {
+            max_cost = top->cost;
+            depth++;
+        }
+
         if (top->checkWin())
         {
             found = true;
@@ -229,17 +236,22 @@ bool greed(Puzzle *root, list<Puzzle *> *path)
 
         top->possibleRange(&start, &end);
         aux->clone(top);
-
+        childFlag = false;
         for (int i = start; i < end; i++)
         {
             if (i != top->space_idx)
             {
                 aux->move(i);
                 if (!exists(aux, &closed) && !exists(aux, &min_heap))
+                {
+                    childFlag = true;
                     min_heap.push(aux->makeChildCopy());
+                }
                 aux->move(top->space_idx);
             }
         }
+        if (childFlag)
+            nonleaf_count++;
     }
 
     if (found)
@@ -257,8 +269,8 @@ bool aStar(Puzzle *root, list<Puzzle *> *path)
     MyQueue<Puzzle *, vector<Puzzle *>, CmpObjective> min_heap;
     list<Puzzle *> closed;
     Puzzle *top, *aux;
-    bool found = false;
-    int start, end;
+    bool found = false, childFlag;
+    int start, end, max_cost = -1;
 
     min_heap.push(root->makeChildCopy());
     min_heap.top()->cost = 0;
@@ -271,6 +283,12 @@ bool aStar(Puzzle *root, list<Puzzle *> *path)
         closed.push_back(top);
         node_count++;
 
+        if (top->cost > max_cost)
+        {
+            max_cost = top->cost;
+            depth++;
+        }
+
         if (top->checkWin())
         {
             found = true;
@@ -279,23 +297,28 @@ bool aStar(Puzzle *root, list<Puzzle *> *path)
 
         top->possibleRange(&start, &end);
         aux->clone(top);
-
+        childFlag = false;
         for (int i = start; i < end; i++)
         {
             if (i != top->space_idx)
             {
                 aux->move(i);
                 if (!exists(aux, &min_heap) && !exists(aux, &closed))
+                {
+                    childFlag = true;
                     min_heap.push(aux->makeChildCopy());
+                }
                 aux->move(top->space_idx);
             }
         }
+
+        if (childFlag)
+            nonleaf_count++;
     }
 
     if (found)
         buildPath(&closed, path);
 
-    // todo: free min_heap
     freeHeap(&min_heap);
     freeList(&closed);
     delete aux;
@@ -303,66 +326,12 @@ bool aStar(Puzzle *root, list<Puzzle *> *path)
     return found;
 }
 
-bool idaRec(Puzzle *parent, list<Puzzle *> *path, int *threshold, int *old_threshold, priority_queue<Puzzle *, vector<Puzzle *>, CmpObjective> *discarded)
-{
-    node_count += 1;
-
-    path->push_back(parent);
-
-    if (parent->checkWin() && parent->objective() <= *threshold)
-        return true;
-
-    if (parent->objective() > *threshold)
-    {
-        discarded->push(parent);
-        path->pop_back();
-        return false;
-    }
-
-    Puzzle *child = parent->makeChildCopy();
-
-    // Assume que algum filho sera visitado
-    depth += 1;
-    nonleaf_count += 1;
-
-    int start, end;
-    bool revert_depth = true; // reverte contagem de profundidade caso nao abrir algum filho
-
-    parent->possibleRange(&start, &end);
-
-    for (int i = start; i < end; i++)
-    {
-        if (i != parent->space_idx)
-        {
-            child->move(i);
-
-            if (!exists(child, path))
-            {
-                revert_depth = false;
-                if (idaRec(child, path, threshold, old_threshold, discarded))
-                    return true;
-                child = parent->makeChildCopy();
-            }
-            else
-                child->move(parent->space_idx); // volta estado se falhar
-        }
-    }
-
-    if (revert_depth)
-    {
-        depth -= 1;
-        nonleaf_count -= 1;
-    }
-    path->pop_back();
-    // delete child;
-
-    return false;
-}
-
 int search(list<Puzzle *> *path, int cost, int threshold)
 {
     Puzzle *p = path->back();
     int f = cost + p->heuristic();
+
+    node_count++;
 
     if (f > threshold)
         return f;
@@ -371,6 +340,7 @@ int search(list<Puzzle *> *path, int cost, int threshold)
 
     int min = INFINITY;
     int start, end, t;
+    bool hasChild = false;
     Puzzle *child = p->makeChildCopy();
 
     p->possibleRange(&start, &end);
@@ -382,6 +352,7 @@ int search(list<Puzzle *> *path, int cost, int threshold)
             child->move(i);
             if (!exists(child, path))
             {
+                hasChild = true;
                 path->push_back(child);
                 t = search(path, cost + 1, threshold);
                 if (t == FOUND)
@@ -393,6 +364,11 @@ int search(list<Puzzle *> *path, int cost, int threshold)
             child->move(p->space_idx);
         }
     }
+    if (hasChild)
+    {
+        depth++;
+        nonleaf_count++;
+    }
 
     return min;
 }
@@ -400,17 +376,22 @@ int search(list<Puzzle *> *path, int cost, int threshold)
 bool idaStar(Puzzle *root, list<Puzzle *> *path)
 {
     int threshold = root->objective();
-    int t;
+    int t, max_depth = 0;
     path->push_back(root);
 
     while (1)
     {
+        depth = 0;
         t = search(path, 0, threshold);
         if (t == FOUND)
             return true;
         if (t == INFINITY)
             return false;
         threshold = t;
+        if (depth > max_depth)
+            max_depth = depth;
     }
+
+    depth = max_depth;
 }
 #endif
