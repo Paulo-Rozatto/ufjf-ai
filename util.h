@@ -7,6 +7,20 @@
 
 using namespace std;
 
+struct CmpCost
+{
+    bool operator()(const Puzzle *p1, const Puzzle *p2) const
+    {
+        return p1->cost > p2->cost;
+    }
+};
+struct CmpHeuristc
+{
+    bool operator()(const Puzzle *p1, const Puzzle *p2) const
+    {
+        return p1->whiteLeft > p2->whiteLeft;
+    }
+};
 struct CmpObjective
 {
     bool operator()(const Puzzle *p1, const Puzzle *p2) const
@@ -15,17 +29,20 @@ struct CmpObjective
     }
 };
 
-struct CmpHeuristc
-{
-    bool operator()(const Puzzle *p1, const Puzzle *p2) const
-    {
-        return p1->whiteLeft > p2->whiteLeft;
-    }
-};
-
 bool exists(Puzzle *p, list<Puzzle *> *s)
 {
     for (std::list<Puzzle *>::iterator it = s->begin(); it != s->end(); ++it)
+    {
+        if ((*it)->equals(p))
+            return true;
+    }
+
+    return false;
+}
+
+bool exists(Puzzle *p, MyQueue<Puzzle *, vector<Puzzle *>, CmpCost> *s)
+{
+    for (MyQueue<Puzzle *, vector<Puzzle *>, CmpCost>::const_iterator it = s->begin(); it != s->end(); ++it)
     {
         if ((*it)->equals(p))
             return true;
@@ -91,6 +108,12 @@ void freeList(list<Puzzle *> *s)
     for (std::list<Puzzle *>::iterator it = s->begin(); it != s->end(); ++it)
         delete *it;
     s->clear();
+}
+
+void freeHeap(MyQueue<Puzzle *, vector<Puzzle *>, CmpCost> *s)
+{
+    for (MyQueue<Puzzle *, vector<Puzzle *>, CmpCost>::const_iterator it = s->begin(); it != s->end(); ++it)
+        delete *it;
 }
 
 void freeHeap(MyQueue<Puzzle *, vector<Puzzle *>, CmpHeuristc> *s)

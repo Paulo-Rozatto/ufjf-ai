@@ -209,6 +209,67 @@ bool dfs(Puzzle *root, list<Puzzle *> *path, int max_depth)
     return found;
 }
 
+bool ordered(Puzzle *root, list<Puzzle *> *path)
+{
+    MyQueue<Puzzle *, vector<Puzzle *>, CmpCost> min_heap;
+    list<Puzzle *> closed;
+    Puzzle *top, *aux;
+    bool found = false, childFlag;
+    int start, end, max_cost = -1;
+
+    min_heap.push(root->makeChildCopy());
+    aux = new Puzzle();
+
+    while (min_heap.size() > 0)
+    {
+        top = min_heap.top();
+        min_heap.pop();
+        closed.push_back(top);
+        node_count++;
+
+        if (top->cost > max_cost)
+        {
+            max_cost = top->cost;
+            depth++;
+        }
+
+        if (top->checkWin())
+        {
+            found = true;
+            break;
+        }
+
+        top->possibleRange(&start, &end);
+        aux->clone(top);
+        childFlag = false;
+        for (int i = start; i < end; i++)
+        {
+            if (i != top->space_idx)
+            {
+                aux->move(i);
+                if (!exists(aux, &closed) && !exists(aux, &min_heap))
+                {
+                    childFlag = true;
+                    aux->cost = top->cost + abs(i - top->space_idx);
+                    min_heap.push(aux->makeChildCopy());
+                }
+                aux->move(top->space_idx);
+            }
+        }
+        if (childFlag)
+            nonleaf_count++;
+    }
+
+    if (found)
+        buildPath(&closed, path);
+
+    freeHeap(&min_heap);
+    freeList(&closed);
+    delete aux;
+
+    return found;
+}
+
 bool greed(Puzzle *root, list<Puzzle *> *path)
 {
     MyQueue<Puzzle *, vector<Puzzle *>, CmpHeuristc> min_heap;

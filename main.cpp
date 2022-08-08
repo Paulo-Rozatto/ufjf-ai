@@ -37,6 +37,7 @@ int main(int argc, char const *argv[])
              << "\t\t\t5 - A*" << endl
              << "3 - DFS"
              << "\t\t\t6 - IDA*" << endl
+             << "4 - Ordenada" << endl
              << "--" << endl
              << "0 - Sair" << endl;
 
@@ -68,15 +69,20 @@ int main(int argc, char const *argv[])
             break;
         case '4':
             start = std::chrono::system_clock::now();
-            has_solution = greed(&root, &path);
+            has_solution = ordered(&root, &path);
             end = std::chrono::system_clock::now();
             break;
         case '5':
             start = std::chrono::system_clock::now();
-            has_solution = aStar(&root, &path);
+            has_solution = greed(&root, &path);
             end = std::chrono::system_clock::now();
             break;
         case '6':
+            start = std::chrono::system_clock::now();
+            has_solution = aStar(&root, &path);
+            end = std::chrono::system_clock::now();
+            break;
+        case '7':
             start = std::chrono::system_clock::now();
             has_solution = idaStar(root.makeChildCopy(), &path);
             end = std::chrono::system_clock::now();
